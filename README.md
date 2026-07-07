@@ -22,13 +22,37 @@ It ships as a Claude Code skill (`fable-style`) plus four domain playbooks, and 
 
 ### As a Claude Code skill
 
-The skill lives in `.claude/skills/`, so any Claude Code session started in this repo discovers it automatically. To use it in another project, copy the `fable-style` directory into that project's `.claude/skills/` (or into `~/.claude/skills/` to enable it everywhere):
+The skill lives in `.claude/skills/`, so any Claude Code session started in this repo discovers it automatically. Discovery is project-scoped: cloning the repo does not touch your `~/.claude`, and the skill is only visible when Claude Code runs from a directory that has it under `.claude/skills/`.
+
+To enable it in every project, install it into your home config with the script below.
+
+**One-liner (no clone needed):**
 
 ```bash
-cp -r .claude/skills/fable-style /path/to/project/.claude/skills/
+curl -fsSL https://raw.githubusercontent.com/thetpmguy/fable-replicated/main/install.sh | sh
 ```
 
-Claude reads `SKILL.md` when the skill is loaded and applies the core rules to every response for the rest of the conversation. It pulls in a reference file when the work matches that domain (for example `references/coding.md` before editing code).
+**From a clone:**
+
+```bash
+./install.sh
+```
+
+Both copy `fable-style` into `~/.claude/skills/`. To target a single project instead of your home config, set `CLAUDE_SKILLS_DIR`:
+
+```bash
+CLAUDE_SKILLS_DIR=/path/to/project/.claude/skills ./install.sh
+```
+
+Or copy the folder by hand:
+
+```bash
+cp -r .claude/skills/fable-style ~/.claude/skills/
+```
+
+The one-liner downloads the repo tarball, so it requires the repo to be public (or otherwise reachable without auth). If the repo is private, clone it and run `./install.sh`, which copies from the local checkout.
+
+Once installed, Claude reads `SKILL.md` when the skill loads and applies the core rules to the rest of the conversation. It pulls in a reference file when the work matches that domain (for example `references/coding.md` before editing code). Discovery makes the skill available; the model still decides when to load it based on the task.
 
 ### As a system prompt or steering spec
 
