@@ -58,9 +58,16 @@ Once installed, Claude reads `SKILL.md` when the skill loads and applies the cor
 
 The rules are model-agnostic. Paste the contents of `SKILL.md` into a system prompt, developer message, or fine-tuning instruction set to push any Claude model toward the Fable register. Add the relevant reference file for domain-specific tasks.
 
-### As training data
+### As a rubric for a training pipeline
 
-The playbooks are written as explicit behavioral targets (voice, answer shape, honesty, epistemics, scope) with calibration examples of good versus bad output. Use them as labeling guidance or reward-model criteria when training a model to act like Fable.
+To be clear about what this is: a behavioral spec, not training data and not a training pipeline. Loading the skill steers a model at inference time by prompt. It changes the model's output, not its weights, and nothing persists once the skill is unloaded. This repo produces no dataset and trains nothing on its own.
+
+It can still feed a training effort you build separately, as the grading standard rather than the data:
+
+- **Labeling guidance.** The playbooks define voice, answer shape, honesty, epistemics, and scope, with good-versus-bad examples. Hand them to annotators (people or a model) as the rubric for scoring generated outputs.
+- **Reward-model / preference criteria.** Use the same rules to define what "better" means when collecting the preference pairs behind an RLHF reward model.
+
+Either way the model only learns the Fable register once you (1) generate outputs, (2) label them against these rules, and (3) run SFT or RLHF on the labels. This repo is step 0, the target definition.
 
 ## Verifying it works
 
